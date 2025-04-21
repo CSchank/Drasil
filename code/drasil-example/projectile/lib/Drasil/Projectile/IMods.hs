@@ -1,4 +1,4 @@
-module Drasil.Projectile.IMods (iMods, landPosIM, messageIM, offsetIM, timeIM) where
+module Drasil.Projectile.IMods (iMods, landPosIM, finalPosIM, messageIM, offsetIM, timeIM) where
 
 import Prelude hiding (cos, sin)
 
@@ -25,11 +25,11 @@ import qualified Drasil.Projectile.Derivations as D
 import qualified Drasil.Projectile.Expressions as E
 import Drasil.Projectile.Figures (figLaunch)
 import Drasil.Projectile.GenDefs (posVecGD)
-import Drasil.Projectile.Unitals (flightDur, landPos, launAngle, launSpeed,
+import Drasil.Projectile.Unitals (flightDur, landPos, finalPos, launAngle, launSpeed,
   message, offset, targPos, tol)
 
 iMods :: [InstanceModel]
-iMods = [timeIM, landPosIM, offsetIM, messageIM]
+iMods = [finalPosIM]
 ---
 timeIM :: InstanceModel
 timeIM = imNoRefs (equationalModelN (nounPhraseSP "calculation of landing time") timeQD)
@@ -70,14 +70,24 @@ timeDerivEqns :: [ModelExpr]
 timeDerivEqns = D.timeDeriv ++ [express timeQD]
 
 ---
+finalPosIM :: InstanceModel
+finalPosIM = imNoRefs (equationalModelN (nounPhraseSP "calculation of landing position") finalPosQD)
+  []
+  (qw finalPos) []
+  (Just landPosDeriv) "calOfLandingDist" []
+
+finalPosQD :: SimpleQDef
+finalPosQD = mkQuantDef finalPos $ E.finalPosExpr
+
 landPosIM :: InstanceModel
 landPosIM = imNoRefs (equationalModelN (nounPhraseSP "calculation of landing position") landPosQD)
-  []
-  (qw landPos) []
+  [qwC launSpeed $ UpFrom (Exc, exactDbl 0),
+   qwC launAngle $ Bounded (Exc, exactDbl 0) (Exc, half $ sy pi_)]
+  (qw landPos) [UpFrom (Exc, exactDbl 0)]
   (Just landPosDeriv) "calOfLandingDist" [angleConstraintNote, gravitationalAccelConstNote, landPosConsNote]
 
 landPosQD :: SimpleQDef
-landPosQD = mkQuantDef landPos $ vAdd (sy landPos) (sy landPos)
+landPosQD = mkQuantDef landPos E.landPosExpr
 
 landPosDeriv :: Derivation
 landPosDeriv = mkDerivName (phrase landPos) (weave [landPosDerivSents, map eS landPosDerivEqns])
@@ -100,7 +110,7 @@ landPosDerivSent3 = foldlSentCol [S "From", refS speedIX,
 landPosDerivSent4 = S "Rearranging this gives us the required" +: phrase equation
 
 landPosDerivEqns :: [ModelExpr]
-landPosDerivEqns = D.landPosDeriv ++ [express landPosQD]
+landPosDerivEqns = D.landPosDeriv ++ [express finalPosQD]
 
 ---
 offsetIM :: InstanceModel
@@ -139,7 +149,7 @@ gravitationalAccelConstNote = ch gravitationalAccelConst `S.is`
 landAndTargPosConsNote = atStartNP' (the constraint) +:+
   eS (sy landPos $> exactDbl 0) `S.and_` eS (sy targPos $> exactDbl 0) `S.are` S "from" +:+. refS posXDirection
 
-landPosNote = ch landPos `S.is` S "from" +:+. refS landPosIM
+landPosNote = ch landPos `S.is` S "from" +:+. refS finalPosIM
 
 landPosConsNote = atStartNP (the constraint) +:+
   eS (sy landPos $> exactDbl 0) `S.is` S "from" +:+. refS posXDirection

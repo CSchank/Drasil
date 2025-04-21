@@ -12,7 +12,7 @@ import Data.Drasil.Concepts.Documentation (datumConstraint,
 import Data.Drasil.Concepts.Math (calculation)
 import Data.Drasil.Concepts.Software (errMsg)
 
-import Drasil.Projectile.IMods (landPosIM, messageIM, offsetIM, timeIM)
+import Drasil.Projectile.IMods (finalPosIM, landPosIM, messageIM, offsetIM, timeIM)
 import Drasil.Projectile.Unitals (flightDur, landPos, message, offset)
 
 {--Functional Requirements--}
