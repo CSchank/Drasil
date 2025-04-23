@@ -18,7 +18,7 @@ import Drasil.Projectile.Unitals (flightDur, landPos, message, offset)
 {--Functional Requirements--}
 
 funcReqs :: [ConceptInstance]
-funcReqs = [verifyInVals, calcValues, outputValues]
+funcReqs = [] --[verifyInVals, calcValues, outputValues]
 
 verifyInVals, calcValues, outputValues :: ConceptInstance
 

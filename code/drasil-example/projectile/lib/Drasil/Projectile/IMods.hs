@@ -74,7 +74,7 @@ finalPosIM :: InstanceModel
 finalPosIM = imNoRefs (equationalModelN (nounPhraseSP "calculation of landing position") finalPosQD)
   []
   (qw finalPos) []
-  (Just landPosDeriv) "calOfLandingDist" []
+  Nothing "calOfLandingDist" []
 
 finalPosQD :: SimpleQDef
 finalPosQD = mkQuantDef finalPos $ E.finalPosExpr

@@ -297,7 +297,7 @@ inputs :: [QuantityDict]
 inputs = map qw [initPos, vel] ++ [qw time]
 
 outputs :: [QuantityDict]
-outputs = [qw finalPos]
+outputs = map qw [finalPos]
 
 unitalQuants :: [QuantityDict]
 unitalQuants = message : map qw constrained
