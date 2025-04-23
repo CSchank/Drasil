@@ -285,7 +285,7 @@ physSystParts = map (!.)
 -- Various gathered data that should be automated --
 ----------------------------------------------------
 symbols :: [QuantityDict]
-symbols = qw flightDur : qw gravitationalAccelConst : unitalQuants ++ map qw constants ++
+symbols = qw gravitationalAccelConst : unitalQuants ++ map qw constants ++
   map qw [acceleration, constAccel, iPos, iSpeed, iVel, ixPos,
   iyPos, ixVel, iyVel, position, scalarPos, projPos, projSpeed, velocity, xAccel,
   xConstAccel, xPos, xVel, yAccel, yConstAccel, yPos, yVel]
@@ -294,7 +294,7 @@ constants :: [ConstQDef]
 constants = [gravitationalAccelConst, piConst, tol]
 
 inputs :: [QuantityDict]
-inputs = map qw [initPos, vel]
+inputs = map qw [initPos, vel] ++ [qw time]
 
 outputs :: [QuantityDict]
 outputs = [qw finalPos]
@@ -309,10 +309,10 @@ inConstraints :: [UncertQ]
 inConstraints = [launAngleUnc, launSpeedUnc, targPosUnc]
 
 outConstraints :: [UncertQ]
-outConstraints = [offsetUnc, flightDurUnc]
+outConstraints = []
 
 constrained :: [ConstrConcept]
-constrained = [landPos, launAngle, launSpeed, offset, targPos, initPos, finalPos, vel]
+constrained = [flightDur, landPos, launAngle, launSpeed, offset, targPos, initPos, finalPos, vel]
 
 acronyms :: [CI]
 acronyms = [oneD, twoD, assumption, dataDefn, genDefn, goalStmt, inModel,

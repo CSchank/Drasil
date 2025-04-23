@@ -87,4 +87,4 @@ projectileMotion = commonIdea "projectileMotion" (pn "Projectile Motion Lesson")
 
 
 allRefs :: [Reference]
-allRefs = nub (figRefs ++ eqnRefs) 
+allRefs = nub (figRefs ++ eqnRefs)

@@ -11,7 +11,7 @@ import Data.Drasil.Concepts.Physics (oneD, position, speed, motion, distance, iS
 
 concepts :: [IdeaDict]
 concepts = nw projMotion : map nw [landingPosNC, launchNC, launchAngleNC, launchSpeedNC, offsetNC, targetPosNC,
-  rectVel, finalPosNC, durationNC, flightDurNC] ++ map nw defs
+  rectVel, finalPosNC] ++ map nw defs
 
 durationNC, flightDurNC, landingPosNC, launchNC, launchAngleNC, launchSpeedNC, offsetNC, targetPosNC,
   rectVel :: IdeaDict

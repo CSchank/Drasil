@@ -509,8 +509,8 @@ instance Typed Expr Space where
     (Right le, _) -> Right le
 
   infer cxt (NCCBinaryOp Scale l r) = case (infer cxt l, infer cxt r) of
-    (Left lt, Left (S.ClifS d rsp)) -> if S.isBasicNumSpace lt && lt == rsp
-      then Left rsp
+    (Left lt, Left cl@(S.ClifS d rsp)) -> if S.isBasicNumSpace lt && lt == rsp
+      then Left cl
       else if lt /= rsp then
         Right $ "Vector scaling expects a scaling by the same kind as the vector's but found scaling by`" ++ show lt ++ "` over vectors of type `" ++ show rsp ++ "`."
       else
