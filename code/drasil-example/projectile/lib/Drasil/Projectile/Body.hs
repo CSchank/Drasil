@@ -118,7 +118,7 @@ scope = foldlSent_ [phraseNP (NP.the (analysis `ofA` twoD)),
 
 externalLinkRef :: Reference
 externalLinkRef = makeURI "projectileSRSLink" 
-  "https://github.com/smiths/caseStudies/tree/master/CaseStudies/projectile" 
+  "https://github.com/smiths/caseStudies/tree/master/CaseStudies/projectile"
   (shortname' $ S "projectileSRSLink")
 
 projectileExamples :: [Sentence]
@@ -287,17 +287,17 @@ physSystParts = map (!.)
 symbols :: [QuantityDict]
 symbols = qw gravitationalAccelConst : unitalQuants ++ map qw constants ++
   map qw [acceleration, constAccel, iPos, iSpeed, iVel, ixPos,
-  iyPos, ixVel, iyVel, position, scalarPos, projPos, projSpeed, time, velocity, xAccel,
+  iyPos, ixVel, iyVel, position, scalarPos, projPos, projSpeed, velocity, xAccel,
   xConstAccel, xPos, xVel, yAccel, yConstAccel, yPos, yVel]
 
 constants :: [ConstQDef]
-constants = [gravitationalAccelConst, piConst, tol]
+constants = []
 
 inputs :: [QuantityDict]
-inputs = map qw [launSpeed, launAngle, targPos]
+inputs = map qw [initPos, vel] ++ [qw time]
 
 outputs :: [QuantityDict]
-outputs = [message, qw offset, qw flightDur]
+outputs = map qw [finalPos]
 
 unitalQuants :: [QuantityDict]
 unitalQuants = message : map qw constrained
@@ -306,13 +306,13 @@ unitalIdeas :: [IdeaDict]
 unitalIdeas = nw message : map nw constrained
 
 inConstraints :: [UncertQ]
-inConstraints = [launAngleUnc, launSpeedUnc, targPosUnc]
+inConstraints = []
 
 outConstraints :: [UncertQ]
-outConstraints = [landPosUnc, offsetUnc, flightDurUnc]
+outConstraints = []
 
 constrained :: [ConstrConcept]
-constrained = [flightDur, landPos, launAngle, launSpeed, offset, targPos]
+constrained = [flightDur, landPos, launAngle, launSpeed, offset, targPos, initPos, finalPos, vel]
 
 acronyms :: [CI]
 acronyms = [oneD, twoD, assumption, dataDefn, genDefn, goalStmt, inModel,

@@ -11,12 +11,15 @@ import Data.Drasil.Concepts.Physics (oneD, position, speed, motion, distance, iS
 
 concepts :: [IdeaDict]
 concepts = nw projMotion : map nw [landingPosNC, launchNC, launchAngleNC, launchSpeedNC, offsetNC, targetPosNC,
-  rectVel] ++ map nw defs
+  rectVel, finalPosNC] ++ map nw defs
 
 durationNC, flightDurNC, landingPosNC, launchNC, launchAngleNC, launchSpeedNC, offsetNC, targetPosNC,
   rectVel :: IdeaDict
+initPosNC    = nc "initial position" (nounPhraseSP "initial position")
+finalPosNC   = nc "final position" (nounPhraseSP "final position")
 durationNC   = nc "duration" (nounPhraseSP "duration")
 launchNC     = nc "launch"   (nounPhraseSP "launch")
+velNC        = compoundNC projectile velocity
 offsetNC     = nc "offset"   (nounPhraseSent $ S "distance between the" +:+ phraseNP (targetPosNC `andThe` landingPosNC))
 
 flightDurNC   = compoundNC (nc "flight"  (nounPhraseSP "flight" )) durationNC
@@ -42,10 +45,21 @@ target     = dcc "target"     (nounPhraseSP "target")     "where the projectile 
 projSpeed  = dccWDS "projSpeed" (nounPhraseSP "1D speed")    (getAcc oneD +:+ phrase speed +:+ S "under" +:+ phrase constant +:+ phrase acceleration)
 projPos    = dccWDS "projPos"   (nounPhraseSP "1D position") (getAcc oneD +:+ phrase position +:+ S "under" +:+ phrase constant +:+ phrase speed)
 
-landPos, launAngle, launSpeed, offset, targPos, flightDur :: ConceptChunk
+initPos, finalPos, landPos, launAngle, launSpeed, offset, targPos, flightDur :: ConceptChunk
+initPos = cc' initPosNC
+  --(foldlSent_ [phraseNP (the $ S "initial") `ofThe` phrase projectile]) -- TODO: fix me!
+  (foldlSent_ [phraseNP (the distance) `S.fromThe` phrase launcher `S.toThe`
+            S "final", phraseNP (position `ofThe` projectile)])
+finalPos = cc' finalPosNC
+  -- (foldlSent_ [phraseNP (the $ S "final") `ofThe` phrase projectile]) -- TODO: fix me!
+  (foldlSent_ [phraseNP (the distance) `S.fromThe` phrase launcher `S.toThe`
+            S "final", phraseNP (position `ofThe` projectile)])
+vel = cc' launchSpeedNC (phraseNP (iSpeed `the_ofThe` projectile) +:+ S "when launched")
+dur = cc' durationNC (foldlSent_ [phraseNP (the time), S " for which the projectile moves"])
 landPos = cc' landingPosNC
   (foldlSent_ [phraseNP (the distance) `S.fromThe` phrase launcher `S.toThe`
             S "final", phraseNP (position `ofThe` projectile)])
+
 
 launAngle = cc' launchAngleNC
   (foldlSent_ [phraseNP (the angle), S "between the", phrase launcher `S.and_` S "a straight line"

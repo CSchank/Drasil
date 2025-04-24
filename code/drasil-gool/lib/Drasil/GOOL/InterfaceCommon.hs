@@ -281,6 +281,16 @@ class (ValueSym r) => List r where
   -- | Finds the index of the first occurrence of a value in a list.
   --   Arguments are: List, Value
   indexOf :: SValue r -> SValue r -> SValue r
+  -- | Map a list of values using a function
+  --   Arguments are: Function, List(s)
+  lMap :: SValue r -> SValue r -> SValue r
+  lMap f xs = lMapN f [xs]
+  -- | Map lists of values using a functionn
+  --   Arguments are: Function, List(s)
+  lMapN :: SValue r -> [SValue r] -> SValue r
+  -- | Fold a list over a value from the left
+  --   Arguments are: Function (a -> b -> b), Starting value (of type b), List of a
+  lFoldl :: SValue r -> SValue r -> SValue r -> SValue r
 
 class (ValueSym r) => Set r where
   -- | Checks membership

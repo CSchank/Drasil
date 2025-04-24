@@ -13,6 +13,11 @@ import Control.Lens ((^.))
 import Data.List (intersperse, isPrefixOf, transpose)
 import Data.List.Split (splitOn)
 import Data.List.NonEmpty (NonEmpty(..), toList)
+import Language.Drasil (allKeys)
+
+import           Data.Map                     (Map)
+import qualified Data.Map as Map
+
 
 -- | Reads data from a file and converts the values to 'Expr's. The file must be
 -- formatted according to the 'DataDesc'' passed as a parameter.
@@ -100,10 +105,20 @@ splitAtFirst = splitAtFirst' []
         dropDelim _ [] = error "impossible"
 
 -- | Converts a list of 'String's to a Clif 'Expr' of a given 'Space'.
+--   TODO: I'm not sure what this is for. If it's meant to support
+--         generalized lists, that's not what I've done. Here, I've used
+--         it as a way to read in componenets of a clif.
 strListAsExpr :: Space -> [String] -> Expr
-strListAsExpr (ClifS d s) ss = undefined -- TODO: fill this in
+strListAsExpr (ClifS dim@(Fixed d) s) ss = Clif dim componentsMap
+
+  where
+    componentsMap = Map.fromList componentsLst
+    componentsLst = zip basisKeys (map (strAsExpr Real) ss)
+    basisKeys = allKeys d Nothing
+ -- TODO: fill this in
 strListAsExpr _ _ = error "strListsAsExpr called on non-vector space"
 
+-- TODO: remove this, it makes no sense
 -- | Converts a 2D list of 'String's to a Clif 'Expr' of a given 'Space'.
 strList2DAsExpr :: Space -> [[String]] -> Expr
 strList2DAsExpr (ClifS d0 (ClifS d1 s)) sss = undefined -- TODO: fill this in

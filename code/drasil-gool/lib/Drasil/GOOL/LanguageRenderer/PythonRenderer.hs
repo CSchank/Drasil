@@ -97,7 +97,7 @@ import Drasil.GOOL.State (MS, VS, lensGStoFS, lensMStoVS, lensVStoMS, revFiles,
   addModuleImportVS, getModuleImports, setFileType, getClassName, setCurrMain,
   getClassMap, getMainDoc, genLoopIndex, varNameAvailable)
 
-import Prelude hiding (break,print,sin,cos,tan,floor,(<>))
+import Prelude hiding (break,print,sin,cos,tan,floor,(<>),readList)
 import Data.Maybe (fromMaybe)
 import Control.Lens.Zoom (zoom)
 import Control.Monad (join)
@@ -454,6 +454,7 @@ instance List PythonCode where
   listAccess = G.listAccess
   listSet = G.listSet
   indexOf = CP.indexOf pyIndex
+  lMapN = \f ls -> funcApp pyList (listType double) [funcApp pyMap (listType double) (f : ls)] -- TODO: This is technically wrong, should have an iterable type
 
 instance Set PythonCode where
   contains a b = typeBinExpr (inPrec pyIn) bool b a
@@ -802,11 +803,12 @@ pyName, pyVersion :: String
 pyName = "Python"
 pyVersion = "3.5.1"
 
-pyInt, pyDouble, pyString, pyVoid :: String
+pyInt, pyDouble, pyString, pyVoid, pyEval :: String
 pyInt = "int"
 pyDouble = "float"
 pyString = "str"
 pyVoid = "NoneType"
+pyEval = "eval"
 
 pyFloatError :: String
 pyFloatError = "Floats unavailable in Python, use Doubles instead"
@@ -839,7 +841,7 @@ pyInputFunc = text "input()" -- raw_input() for < Python 3.0
 pyPrintFunc = text printLabel
 
 pyListSize, pyIndex, pyInsert, pyAppendFunc, pyReadline, pyReadlines, pyClose, 
-  pySplit, pyRange, pyRstrip, pyMath, pyIn, pyAdd, pyRemove, pyUnion :: String
+  pySplit, pyRange, pyRstrip, pyMath, pyIn, pyAdd, pyRemove, pyUnion, pyMap, pyList :: String
 pyListSize = "len"
 pyIndex = "index"
 pyInsert = "insert"
@@ -855,6 +857,8 @@ pyIn = "in"
 pyAdd = "add"
 pyRemove = "remove"
 pyUnion = "union"
+pyMap = "map"
+pyList = "list"
 
 pyDef, pyLambdaDec, pyElseIf, pyRaise, pyExcept :: Doc
 pyDef = text "def"
@@ -933,6 +937,9 @@ readInt inSrc = funcApp pyInt int [inSrc]
 readDouble inSrc = funcApp pyDouble double [inSrc]
 readString inSrc = objMethodCall string inSrc pyRstrip []
 
+readList :: (OORenderSym r) => VSType r -> SValue r -> SValue r
+readList t inSrc = funcApp pyEval (listType t) [inSrc]
+
 range :: (CommonRenderSym r) => SValue r -> SValue r -> SValue r -> SValue r
 range initv finalv stepv = funcApp pyRange (listType int) [initv, finalv, stepv]
 
@@ -984,7 +991,17 @@ pyInput inSrc v = v &= (v >>= pyInput' . getType . variableType)
         pyInput' Boolean = inSrc ?!= litString "0"
         pyInput' String = readString inSrc
         pyInput' Char = inSrc
-        pyInput' _ = error "Attempt to read a value of unreadable type"
+        pyInput' (List t) = readList (ty t) inSrc
+        pyInput' x = error $ "Attempt to read a value of unreadable type: " ++ show x
+
+        -- I am willing to bet this already exists somewhere
+        ty :: (CommonRenderSym r) => CodeType -> VSType r
+        ty Integer = int
+        ty Float = float
+        ty Double = double
+        ty Boolean = error "Not implemented"
+        ty String = string
+        ty Char = char
 
 pyThrow :: (CommonRenderSym r) => r (Value r) -> Doc
 pyThrow errMsg = pyRaise <+> exceptionObj' <> parens (RC.value errMsg)

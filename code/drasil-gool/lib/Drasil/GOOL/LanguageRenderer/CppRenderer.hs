@@ -461,6 +461,8 @@ instance (Pair p) => List (p CppSrcCode CppHdrCode) where
   listAccess = pair2 listAccess listAccess
   listSet = pair3 listSet listSet
   indexOf = pair2 indexOf indexOf
+  lMapN = error "maps are not yet supported in C++ codegen"
+  lFoldl = error "folds are not yet supported in C++ codegen"
 
 instance (Pair p) => Set (p CppSrcCode CppHdrCode) where
   contains = pair2 contains contains

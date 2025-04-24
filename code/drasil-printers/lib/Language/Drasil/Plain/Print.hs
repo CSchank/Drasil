@@ -25,6 +25,11 @@ import Text.PrettyPrint.HughesPJ (Doc, (<>), (<+>), brackets, comma, double,
   doubleQuotes, empty, hcat, hsep, integer, parens, punctuate, space, text, 
   vcat, render)
 
+import Language.Drasil (BasisBlades(..))
+
+import           Data.Map                     (Map)
+import qualified Data.Map as Map
+
 -- | Data is either linear or not.
 data SingleLine = OneLine | MultiLine
 
@@ -70,6 +75,7 @@ pExprDoc f (Font Emph e) = text "_" <> pExprDoc f e <> text "_"
 pExprDoc f (Div n d) = parens (pExprDoc f n) <> text "/" <> parens (pExprDoc f d)
 pExprDoc f (Sqrt e) = text "sqrt" <> parens (pExprDoc f e)
 pExprDoc _ (Spc Thin) = space
+pExprDoc _ (Clif d es) = clfDoc es
 
 -- | Helper for printing sentences ('Spec's) in 'Doc' format.
 specDoc :: SingleLine -> Spec -> Doc
@@ -113,6 +119,14 @@ mtxDoc :: SingleLine -> [[Expr]] -> Doc
 mtxDoc OneLine rs = brackets $ hsep $ map (brackets . hsep . map (pExprDoc 
   OneLine)) rs
 mtxDoc MultiLine rs = brackets $ vcat $ map (hsep . map (pExprDoc MultiLine)) rs
+
+-- | Helper for printing clifs.
+--   TODO: Tweak this if needed
+clfDoc :: BasisBlades Expr -> Doc
+clfDoc bs = 
+  brackets $ 
+    hsep $ 
+      map (pExprDoc MultiLine) $ Map.elems bs
 
 -- TODO: Double check that this is valid in all output languages
 -- | Helper for printing special characters (for degrees and partial derivatives).

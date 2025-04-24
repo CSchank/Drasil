@@ -12,7 +12,7 @@ import qualified Data.Drasil.Quantities.Physics as QP (iSpeed,
 import Data.Drasil.Quantities.Physics (gravitationalAccel, gravitationalAccelConst,
   ixVel, iyVel, xPos, yPos, time, iPos, scalarPos, xVel, yVel, xAccel, yAccel, position, 
   velocity, acceleration, constAccelV, speed)
-import Drasil.Projectile.Unitals (launAngle, launSpeed, targPos, tol, landPos, offset)
+import Drasil.Projectile.Unitals (launAngle, launSpeed, targPos, tol, landPos, offset, vel, initPos)
 
 flightDur', iyPos, yConstAccel, iSpeed :: PExpr
 flightDur' = exactDbl 2 $* sy launSpeed $* sin (sy launAngle) $/ sy gravitationalAccelConst
@@ -52,6 +52,9 @@ posVecExpr = vec2D
 --
 landPosExpr :: PExpr
 landPosExpr = exactDbl 2 $* square (sy launSpeed) $* sin (sy launAngle) $* cos (sy launAngle) $/ sy gravitationalAccelConst
+
+finalPosExpr :: PExpr
+finalPosExpr = vAdd (sy initPos) (vScale (sy time) (sy vel)) -- p_f = p_i + t * v
 
 -- Helper expressions that represent the vectors of quantities as components
 positionXY, velocityXY, accelerationXY, constAccelXY :: PExpr

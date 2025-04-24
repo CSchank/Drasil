@@ -252,6 +252,7 @@ instance List CodeInfoOO where
   listAccess = execute2
   listSet    = execute3
   indexOf    = execute2
+  lMapN      = execute1List
 
 instance Set CodeInfoOO where
   contains = execute2
@@ -524,6 +525,12 @@ execute1 s = do
 
 executeList :: [State a (CodeInfoOO ())] -> State a (CodeInfoOO ())
 executeList l = do
+  sequence_ l
+  noInfo
+
+execute1List :: State a (CodeInfoOO ()) -> [State a (CodeInfoOO ())] -> State a (CodeInfoOO ())
+execute1List s l = do
+  _ <- s
   sequence_ l
   noInfo
 

@@ -21,6 +21,9 @@ import Language.Drasil.Printing.Import.Literal (literal)
 import Language.Drasil.Printing.Import.Symbol (symbol)
 import Language.Drasil.Printing.Import.Helpers (lookupC, parens)
 
+import           Data.Map                     (Map)
+import qualified Data.Map as Map
+
 
 -- | Helper that creates an expression row given printing information, an operator, and an expression.
 mkCall :: PrintingInformation -> P.Ops -> Expr -> P.Expr
@@ -167,6 +170,7 @@ expr (ESBBinaryOp SContains a b)  sm = mkBOp sm P.SContains a b
 expr (Operator o d e)         sm = eop sm o d e
 expr (RealI c ri)             sm = renderRealInt sm (lookupC (sm ^. stg)
   (sm ^. ckdb) c) ri
+expr (Clif d bs)              sm = P.Clif d (Map.map ((flip expr) sm) bs)
 
 -- | Common method of converting associative operations into printable layout AST.
 assocExpr :: P.Ops -> Int -> [Expr] -> PrintingInformation -> P.Expr
