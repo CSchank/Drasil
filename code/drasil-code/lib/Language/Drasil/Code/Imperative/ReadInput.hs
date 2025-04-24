@@ -101,9 +101,10 @@ splitAtFirst = splitAtFirst' []
 
 -- | Converts a list of 'String's to a Clif 'Expr' of a given 'Space'.
 strListAsExpr :: Space -> [String] -> Expr
-strListAsExpr (ClifS d s) ss = undefined -- TODO: fill this in
+strListAsExpr (ClifS d s) ss = Clif d (map read ss) -- TODO: fill this in
 strListAsExpr _ _ = error "strListsAsExpr called on non-vector space"
 
+-- TODO: remove this, it makes no sense
 -- | Converts a 2D list of 'String's to a Clif 'Expr' of a given 'Space'.
 strList2DAsExpr :: Space -> [[String]] -> Expr
 strList2DAsExpr (ClifS d0 (ClifS d1 s)) sss = undefined -- TODO: fill this in

@@ -210,7 +210,56 @@ data BasisKey =
     Y BasisKey
   | N BasisKey
   | E
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
+
+instance Ord BasisKey where
+  (<=) m n = toNat m <= toNat n
+
+instance Enum BasisKey where
+  toEnum n
+    | n < 0 = error "No such BasisKey"
+    | True = toEnum' n E
+        where
+          toEnum' n m 
+            | n == 0          = m
+            | n `mod` 2 == 0  = toEnum' (n `div` 2) (N m)
+            | n `mod` 2 == 1  = toEnum' (n `div` 2) (Y m)
+  fromEnum = fromIntegral . toNat
+
+toNat :: BasisKey -> Natural
+toNat n = toNat' n 0
+  where
+    toNat' E m      = m
+    toNat' (N E) m  = m
+    toNat' (Y E) m  = m + 1
+    toNat' (N n) m  = toNat' n (m * 2)
+    toNat' (Y n) m  = toNat' n ((m + 1) * 2)
+
+expandToDimension :: Natural -> BasisKey -> BasisKey
+expandToDimension d k = 
+  if n <= d then
+    padBy (d - n) k
+  else k
+  where
+    n = length k
+    length E = 0
+    length (N n) = 1 + length n
+    length (Y n) = 1 + length n
+
+    padBy n k
+      | n == 0 = k
+      | True = N (padBy (n-1) k)
+
+
+
+-- instance Ord BasisKey where
+--   (<=) E n            = True
+--   (<=) (N n) E        = n <= E
+--   (<=) (Y n) E        = False
+--   (<=) (Y n0) (Y n1)  = n0 <= n1
+--   (<=) (N n0) (N n1)  = n0 <= n1
+--   (<=) (N n0) (Y n1)  = 
+
 
 -- | A mapping from basis blades to their expressions
 type BasisBlades e =

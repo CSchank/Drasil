@@ -379,6 +379,8 @@ convExpr Operator{} = error "convExpr: Operator"
 convExpr (RealI c ri)  = do
   g <- get
   convExpr $ renderRealInt (lookupC g c) ri
+convExpr (NatCCBinaryOp _ _ _) = error "convExpr: NatCCBinaryOp"
+convExpr (Clif _ _) = error "convExpr: Clif"
 
 -- | Generates a function/method call, based on the 'UID' of the chunk representing
 -- the function, the list of argument 'Expr's, the list of named argument 'Expr's,
@@ -450,6 +452,7 @@ unopB Not = (?!)
 unopCN :: (SharedProg r) => UFuncCN -> (SValue r -> SValue r)
 unopCN Dim = listSize
 unopCN Norm = error "unop: Norm not implemented" -- TODO
+unopCN Grade = error "unop: Grade not implemented" -- TODO
 
 -- | Similar to 'unop', but for vectors.
 unopCC :: (SharedProg r) => UFuncCC -> (SValue r -> SValue r)
@@ -484,18 +487,31 @@ ordBfunc LEq = (?<=)
 ordBfunc GEq = (?>=)
 
 -- Maps a 'CCCBinOp' to it's corresponding GOOL binary function.
-clfClfClfBfunc :: CCCBinOp -> (SValue r -> SValue r -> SValue r)
+clfClfClfBfunc :: SharedProg r => CCCBinOp -> (SValue r -> SValue r -> SValue r)
 clfClfClfBfunc Cross = error "bfunc: Cross not implemented"
-clfClfClfBfunc CAdd = error "bfunc: Clif addition not implemented"
+clfClfClfBfunc CAdd = 
+  let
+      varX = var "x" double
+      varY = var "y" double
+      addFn = lambda [varX, varY] (valueOf varX #+ valueOf varY)
+  in
+      \l0 l1 -> lMapN addFn [l0, l1]
 clfClfClfBfunc CSub = error "bfunc: Clif subtraction not implemented"
+clfClfClfBfunc WedgeProd = error "bfunc: Clif wedge product not implemented"
+clfClfClfBfunc GeometricProd = error "bfunc: Clif geometric product not implemented"
 
 -- Maps a 'CCNBinOp' to it's corresponding GOOL binary function.
 clfClfNumBfunc :: CCNBinOp -> (SValue r -> SValue r -> SValue r)
 clfClfNumBfunc Dot = error "convExpr DotProduct"
 
 -- Maps a 'NCCBinOp' to it's corresponding GOOL binary function.
-numClfClfBfunc :: NCCBinOp -> (SValue r -> SValue r -> SValue r)
-numClfClfBfunc Scale = error "convExpr Scaling of Vectors"
+numClfClfBfunc :: SharedProg r => NCCBinOp -> (SValue r -> SValue r -> SValue r)
+numClfClfBfunc Scale = 
+  let
+      varX = var "x" double
+      scaleFn n = lambda [varX] (valueOf varX #* n)
+  in
+      \n -> lMap (scaleFn n) 
 
 -- Maps a 'ESSBinOp' to its corresponding GOOL binary function.
 elementSetSetBfunc :: (SharedProg r) => ESSBinOp -> (SValue r -> SValue r -> SValue r)
@@ -1080,6 +1096,8 @@ convExprProc Operator{} = error "convExprProc: Operator"
 convExprProc (RealI c ri)  = do
   g <- get
   convExprProc $ renderRealInt (lookupC g c) ri
+convExprProc (NatCCBinaryOp _ _ _) = error "convExprProc: NatCCBinaryOp"
+convExprProc (Clif _ _) = error "convExprProc: Clif"
 
 -- | Generates a function call, based on the 'UID' of the chunk representing
 -- the function, the list of argument 'Expr's, the list of named argument 'Expr's,
