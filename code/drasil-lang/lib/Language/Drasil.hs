@@ -17,7 +17,7 @@ module Language.Drasil (
   , apply1, apply2
   , m2x2, vec2D, dgnl2x2, rowVec, columnVec, mkSet
   , vScale, vAdd, vSub
-  , Completeness, Relation, BasisBlades
+  , Completeness, Relation, BasisBlades, allKeys
 
   -- ** Literals Language
   , Literal
@@ -309,7 +309,7 @@ import Language.Drasil.Expr.Class (ExprC(..),
   m2x2, vec2D, dgnl2x2, rowVec, columnVec, mkSet,
   vScale, vAdd, vSub
   )
-import Language.Drasil.Expr.Lang (Expr, Completeness, Relation, BasisBlades)
+import Language.Drasil.Expr.Lang (Expr, Completeness, Relation, BasisBlades, allKeys)
 import Language.Drasil.Literal.Class (LiteralC(..))
 import Language.Drasil.Literal.Lang (Literal)
 import Language.Drasil.ModelExpr.Class (ModelExprC(..))

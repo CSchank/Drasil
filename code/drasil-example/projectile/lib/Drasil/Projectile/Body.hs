@@ -291,7 +291,7 @@ symbols = qw gravitationalAccelConst : unitalQuants ++ map qw constants ++
   xConstAccel, xPos, xVel, yAccel, yConstAccel, yPos, yVel]
 
 constants :: [ConstQDef]
-constants = [gravitationalAccelConst, piConst, tol]
+constants = []
 
 inputs :: [QuantityDict]
 inputs = map qw [initPos, vel] ++ [qw time]
@@ -306,7 +306,7 @@ unitalIdeas :: [IdeaDict]
 unitalIdeas = nw message : map nw constrained
 
 inConstraints :: [UncertQ]
-inConstraints = [launAngleUnc, launSpeedUnc, targPosUnc]
+inConstraints = []
 
 outConstraints :: [UncertQ]
 outConstraints = []

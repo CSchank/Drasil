@@ -250,6 +250,12 @@ expandToDimension d k =
       | n == 0 = k
       | True = N (padBy (n-1) k)
 
+-- | Generate all keys for a given dimension
+--   Inputs: dimension, optional grade
+allKeys :: Natural -> Maybe Natural -> [BasisKey]
+allKeys d Nothing = 
+  map toEnum [0..2 ^ d]
+
 
 
 -- instance Ord BasisKey where

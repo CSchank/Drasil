@@ -15,7 +15,7 @@ concepts = nw projMotion : map nw [landingPosNC, launchNC, launchAngleNC, launch
 
 durationNC, flightDurNC, landingPosNC, launchNC, launchAngleNC, launchSpeedNC, offsetNC, targetPosNC,
   rectVel :: IdeaDict
-initPosNC    = nc "initial" (nounPhraseSP "initial")
+initPosNC    = nc "initial position" (nounPhraseSP "initial position")
 finalPosNC   = nc "final position" (nounPhraseSP "final position")
 durationNC   = nc "duration" (nounPhraseSP "duration")
 launchNC     = nc "launch"   (nounPhraseSP "launch")
