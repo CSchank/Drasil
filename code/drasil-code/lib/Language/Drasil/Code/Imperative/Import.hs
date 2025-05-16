@@ -496,7 +496,8 @@ clfClfClfBfunc CAdd =
       addFn = lambda [varX, varY] (valueOf varX #+ valueOf varY)
   in
       \l0 l1 -> lMapN addFn [l0, l1]
-clfClfClfBfunc CSub = error "bfunc: Clif subtraction not implemented"
+clfClfClfBfunc CSub = 
+  \m n -> clfClfClfBfunc CAdd m (unopCC NegC n)
 clfClfClfBfunc WedgeProd = error "bfunc: Clif wedge product not implemented"
 clfClfClfBfunc GeometricProd = error "bfunc: Clif geometric product not implemented"
 
